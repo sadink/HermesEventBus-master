@@ -12,7 +12,7 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1
+        versionCode 1002
         versionName version
     }
     buildTypes {
@@ -35,23 +35,25 @@ dependencies {
 }
 
 
-def siteUrl = 'https://github.com'    // project homepage
-def gitUrl = 'https://github.com' // project git
+def siteUrl = 'https://github.com/Xiaofei-it/HermesEventBus/blob/master/README-zh-CN.md'    // 项目主页
+def gitUrl = 'https://github.com/Xiaofei-it/HermesEventBus.git' // 项目的git地址
 
 install {
     repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
+        // 生成pom.xml
         pom {
             project {
-                packaging 'aar'
-                name 'Less Code For Android'
-                url siteUrl
+                packaging 'aar' // 打包的类型
+                name 'HermesEventBus-master' // 项目名称
+                url siteUrl // 项目的主页
+                // 配置开源证书信息
                 licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'
                         url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
+                // 配置开发者信息
                 developers {
                     developer {
                         id 'lhfboy'
@@ -69,16 +71,19 @@ install {
     }
 }
 
+// 生成对应的source.jar
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
 
+// 生成java doc文件
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
+// 生成对应的javadoc.jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
@@ -89,22 +94,25 @@ artifacts {
     archives sourcesJar
 }
 
-
+// 读取配置的bintray用户的信息
 Properties properties = new Properties()
 boolean isHasFile = false
 if (project.rootProject.file('local.properties') != null){
     isHasFile = true
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
 }
+
+// 配置bintray的信息
 bintray {
     user = isHasFile ? properties.getProperty("bintray.user") : System.getenv("bintray.user")
     key = isHasFile ? properties.getProperty("bintray.apikey") : System.getenv("bintray.apikey")
     configurations = ['archives']
     pkg {
-        repo = "maven"
-        name = "HermesEventBus"                                                 // #CONFIG# project name in jcenter
+        repo = "maven" // 在bintray上边建立的仓库名字
+        name = "HermesEventBus" // 在bintray上Package名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl
+        labels = ['android']  // 设置标签
         licenses = ["Apache-2.0"]
         publish = true
     }
